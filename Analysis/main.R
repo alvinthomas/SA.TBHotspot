@@ -1,70 +1,118 @@
 ###### Tuberculosis Deterministic Model ######
-# Made for Infectious Disease Dynamics
-# Based on "Heterogeneity in tuberculosis transmission and the
-# role of geographic hotspots in propagating epidemics"
-# Dowdy et. al
-#
-# Quarter 4, 2015
-# Johns Hopkins Univeristy
-# Alvin G. Thomas
-# Created: May 6, 2015
-# Last Modified: May 15, 2015
+### Made for Infectious Disease Dynamics
+### Based on "Heterogeneity in tuberculosis transmission and the
+### role of geographic hotspots in propagating epidemics"
+### Dowdy et. al
+###
+### Quarter 4, 2015
+### Johns Hopkins Univeristy
+### Alvin G. Thomas
+### Created: May 6, 2015
+### Last Modified: October 17, 2015
 
+## Required Packages ##
+# install.packages("ggplot2")
+# install.packages("ggthemes")
 library("ggplot2")
 library("ggthemes")
-#library("mc2d")
 
-# Requires
+## Support Scripts ##
 source("~/Documents/R Workspace/SA.TBHotspot/R/DeterministicSIR.r")
 
-# Parameter Definitions for Rio de Janerio
-# Based on Dowdy et. al
-# DEF.BETA0 = 3.71 # Number of transmissions per active TB per year, community
-# DEF.BETA1 = 9.74 # Number of transmissions per active TB per year, hotspot
-# DEF.RT = 0.03 # Relative rate of transmission, hotspot-to-hotspot vs. hotspot-to-community
-# DEF.Z1 = 0.06 # Proportion of total population residing in the hotspot
-# DEF.Z0 = 1 - DEF.Z1 # Proportion of total population residing in the community
-# DEF.ZETA1 = 0.31 # Rate of rapid progression after recent infection, HIV-positive, per year
-# DEF.NU1 = 0.08 # Rate of slow progression after remote infection, HIV-positive, per year
-# DEF.MUTB0 = 0.031 # TB mortality rate, HIV-negative, per year
-# DEF.MUTB1 = 0.074 # TB mortality rate, HIV-positive, per year
-# DEF.RHO0 = 0.87 # TB detection/treatment rate, HIV-negative, per year
-# DEF.RHO1 = 1.74 # TB detection/treatment rate, HIV-positive, per year
-# DEF.PHI = 0.00015 # HIV incidence, per year
-# DEF.MU1 = 0.026 # HIV mortality rate (non-TB), per year
-# DEF.PSI = 0.0083 # TB relapse rate, per year
-# DEF.RI = 0.68 # Relative infectivity of HIV/TB cases
-# DEF.P = 0.56 # Partial immunity to reinfection if latently infected
-# DEF.ETA = 1/5 # Inverse Duration of `recent infection' phase
-# DEF.ZETA0 = 0.03 # Rate of rapid progression during this phase, HIV-negative, per year
-# DEF.NU0 = 0.0005 # Rate of slow progression of remote TB infection, HIV-negative, per year
-# DEF.MU0 = 1/73 # Inverse Life expectancy
-# DEF.RH = 2.13 # Relative HIV incidence in hotspot vs. community
-# MAX.TIME = 1000 # One century
+##### Variable Definitions #####
 
-# Parameter Definitions for South Africa, Gauteng Province, Carletonville
-DEF.BETA0 = 1.77 # Number of transmissions per active TB per year, community
-DEF.BETA1 = 2.427 # Number of transmissions per active TB per year, hotspot
-DEF.RT = 0.03 # Relative rate of transmission, hotspot-to-hotspot vs. hotspot-to-community
-DEF.Z1 = 0.0015 # Proportion of total population residing in the hotspot
-DEF.Z0 = 1 - DEF.Z1 # Proportion of total population residing in the community
-DEF.ZETA1 = 0.31 # Rate of rapid progression after recent infection, HIV-positive, per year
-DEF.NU1 = 0.08 # Rate of slow progression after remote infection, HIV-positive, per year
-DEF.MUTB0 = 48/100000 # TB mortality rate, HIV-negative, per year
-DEF.MUTB1 = 121/100000 # TB mortality rate, HIV-positive, per year
-DEF.RHO0 = 0.53 # TB detection/treatment rate, HIV-negative, per year
-DEF.RHO1 = 1.06 # TB detection/treatment rate, HIV-positive, per year
-DEF.PHI = 0.01 # HIV incidence, per year
-DEF.MU1 = 0.007 # HIV mortality rate (non-TB), per year
-DEF.PSI = 0.0083 # TB relapse rate, per year
-DEF.RI = 0.68 # Relative infectivity of HIV/TB cases
-DEF.P = 0.56 # Partial immunity to reinfection if latently infected
-DEF.ETA = 1/5 # Inverse Duration of `recent infection' phase
-DEF.ZETA0 = 0.03 # Rate of rapid progression during this phase, HIV-negative, per year
-DEF.NU0 = 0.0005 # Rate of slow progression of remote TB infection, HIV-negative, per year
-DEF.MU0 = 1/56 # Inverse Life expectancy
-DEF.RH = 2.65 # Relative HIV incidence in hotspot vs. community
-MAX.TIME = 1000 # One millenium
+# ### Parameter Definitions for Rio de Janerio
+# ### Based on Dowdy et. al
+# # Number of transmissions per active TB per year, community
+# DEF.BETA0 = 3.71
+# # Number of transmissions per active TB per year, hotspot
+# DEF.BETA1 = 9.74
+# # Relative rate of transmission, hotspot-to-hotspot vs. hotspot-to-community
+# DEF.RT = 0.03
+# # Proportion of total population residing in the hotspot
+# DEF.Z1 = 0.06
+# # Proportion of total population residing in the community
+# DEF.Z0 = 1 - DEF.Z1
+# # Rate of rapid progression after recent infection, HIV-positive, per year
+# DEF.ZETA1 = 0.31
+# # Rate of slow progression after remote infection, HIV-positive, per year
+# DEF.NU1 = 0.08
+# # TB mortality rate, HIV-negative, per year
+# DEF.MUTB0 = 0.031
+# # TB mortality rate, HIV-positive, per year
+# DEF.MUTB1 = 0.074
+# # TB detection/treatment rate, HIV-negative, per year
+# DEF.RHO0 = 0.87
+# # TB detection/treatment rate, HIV-positive, per year
+# DEF.RHO1 = 1.74
+# # HIV incidence, per year
+# DEF.PHI = 0.00015
+# # HIV mortality rate (non-TB), per year
+# DEF.MU1 = 0.026
+# # TB relapse rate, per year
+# DEF.PSI = 0.0083
+# # Relative infectivity of HIV/TB cases
+# DEF.RI = 0.68
+# # Partial immunity to reinfection if latently infected
+# DEF.P = 0.56
+# # Inverse Duration of `recent infection' phase
+# DEF.ETA = 1/5
+# # Rate of rapid progression during this phase, HIV-negative, per year
+# DEF.ZETA0 = 0.03
+# # Rate of slow progression of remote TB infection, HIV-negative, per year
+# DEF.NU0 = 0.0005
+# # Inverse Life expectancy
+# DEF.MU0 = 1/73
+# # Relative HIV incidence in hotspot vs. community
+# DEF.RH = 2.13
+# # One millenium
+# MAX.TIME = 1000
+
+### Parameter Definitions for South Africa, Gauteng Province, Carletonville
+# Number of transmissions per active TB per year, community
+DEF.BETA0 = 1.77
+# Number of transmissions per active TB per year, hotspot
+DEF.BETA1 = 2.427
+# Relative rate of transmission, hotspot-to-hotspot vs. hotspot-to-community
+DEF.RT = 0.03
+# Proportion of total population residing in the hotspot
+DEF.Z1 = 0.0015
+# Proportion of total population residing in the community
+DEF.Z0 = 1 - DEF.Z1
+# Rate of rapid progression after recent infection, HIV-positive, per year
+DEF.ZETA1 = 0.31
+# Rate of slow progression after remote infection, HIV-positive, per year
+DEF.NU1 = 0.08
+# TB mortality rate, HIV-negative, per year
+DEF.MUTB0 = 48/100000
+# TB mortality rate, HIV-positive, per year
+DEF.MUTB1 = 121/100000
+# TB detection/treatment rate, HIV-negative, per year
+DEF.RHO0 = 0.53
+# TB detection/treatment rate, HIV-positive, per year
+DEF.RHO1 = 1.06
+# HIV incidence, per year
+DEF.PHI = 0.01
+# HIV mortality rate (non-TB), per year
+DEF.MU1 = 0.007
+# TB relapse rate, per year
+DEF.PSI = 0.0083
+# Relative infectivity of HIV/TB cases
+DEF.RI = 0.68
+# Partial immunity to reinfection if latently infected
+DEF.P = 0.56
+# Inverse Duration of `recent infection' phase
+DEF.ETA = 1/5
+# Rate of rapid progression during this phase, HIV-negative, per year
+DEF.ZETA0 = 0.03
+# Rate of slow progression of remote TB infection, HIV-negative, per year
+DEF.NU0 = 0.0005
+# Inverse Life expectancy
+DEF.MU0 = 1/56
+# Relative HIV incidence in hotspot vs. community
+DEF.RH = 2.65
+# One millenium
+MAX.TIME = 1000
 
 dx.dt.SL2ARHOT <- function(t, y, param) {
   # There are five primary compartments
@@ -909,39 +957,3 @@ sensList[17,3] <- i_diff
 DEF.RH=2.13
 
 sensList
-
-
-
-
-#### TESTING ####
-# y = c(S_h0_g0=DEF.S_H0_G0, S_h0_g1=DEF.S_H0_G1,
-#       S_h1_g0=DEF.S_H1_G0, S_h1_g1=DEF.S_H1_G1,
-#       L1_h0_g0=DEF.L1_H0_G0, L1_h0_g1=DEF.L1_H0_G1,
-#       L1_h1_g0=DEF.L1_H1_G0, L1_h1_g1=DEF.L1_H1_G1,
-#       L2_h0_g0=DEF.L2_H0_G0, L2_h0_g1=DEF.L2_H0_G1,
-#       L2_h1_g0=DEF.L2_H1_G0, L2_h1_g1=DEF.L2_H1_G1,
-#       A_h0_g0=DEF.A_H0_G0, A_h0_g1=DEF.A_H0_G1,
-#       A_h1_g0=DEF.A_H1_G0, A_h1_g1=DEF.A_H1_G1,
-#       R_h0_g0=DEF.R_H0_G0, R_h0_g1=DEF.R_H0_G1,
-#       R_h1_g0=DEF.R_H1_G0, R_h1_g1=DEF.R_H1_G1)
-# param <- c(beta0=DEF.BETA0,
-#                beta1=DEF.BETA1,
-#                rt=DEF.RT,
-#                z1=DEF.Z1,
-#                z0=DEF.Z0,
-#                zeta1=DEF.ZETA1,
-#                nu1=DEF.NU1,
-#                mutb0=DEF.MUTB0,
-#                mutb1=DEF.MUTB1,
-#                rho0=DEF.RHO0,
-#                rho1=DEF.RHO1,
-#                phi=DEF.PHI,
-#                mu1=DEF.MU1,
-#                psi=DEF.PSI,
-#                ri=DEF.RI,
-#                p=DEF.P,
-#                eta=DEF.ETA,
-#                zeta0=DEF.ZETA0,
-#                nu0=DEF.NU0,
-#                mu0=DEF.MU0,
-#                rh=DEF.RH)
